@@ -1,36 +1,36 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="container">
-    <h1>Products</h1>
+    <h1>Product List</h1>
+    <a href="{{ route('admin.products.create') }}" class="btn btn-success">Create Product</a>
 
-    <a href="{{ route('admin.products.create') }}" class="btn btn-primary mb-3">Add New Product</a>
-
-    <table class="table table-bordered">
+    <table class="table">
         <thead>
             <tr>
-                <th>Product ID</th>
                 <th>Name</th>
+                <th>SKU</th>
                 <th>Price</th>
-                <th>Stock Quantity</th>
-                <th>Categories</th>
+                <th>Stock</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($products as $product)
-            <tr>
-                <td>{{ $product->product_id }}</td>
-                <td>{{ $product->name }}</td>
-                <td>{{ $product->price }}</td>
-                <td>{{ $product->stock_quantity }}</td>
-                <td>{{ implode(', ', $product->categories) }}</td>
-                <td>
-                    <a href="{{ route('admin.products.edit', $product) }}" class="btn btn-warning">Edit</a>
-                </td>
-            </tr>
+            @foreach($products as $product)
+                <tr>
+                    <td>{{ $product->name }}</td>
+                    <td>{{ $product->sku }}</td>
+                    <td>{{ $product->price }}</td>
+                    <td>{{ $product->stock_quantity }}</td>
+                    <td>
+                        <a href="{{ route('admin.products.edit', $product->id) }}" class="btn btn-primary">Edit</a>
+                        <form action="{{ route('admin.products.destroy', $product->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>
-</div>
 @endsection
