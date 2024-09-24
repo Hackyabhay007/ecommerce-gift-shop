@@ -2,7 +2,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AdminProductController;
-
+use App\Http\Controllers\Admin\CouponController;
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
@@ -26,5 +26,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('products/{product}/edit', [AdminProductController::class, 'edit'])->name('admin.products.edit'); // Show form to edit product
     Route::put('products/{product}', [AdminProductController::class, 'update'])->name('admin.products.update'); // Update a product
     Route::delete('products/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy'); // Delete a product
+    Route::resource('coupons', CouponController::class); // Add this line for coupons
+
+     // Coupon routes
+     Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
+     Route::get('/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
+     Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');
+     Route::get('/coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
+     Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
+     Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
+ 
 });
 

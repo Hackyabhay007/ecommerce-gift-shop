@@ -1,11 +1,9 @@
 <?php
-
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\BlogController;
 use App\Http\Controllers\HeroSectionController;
-use App\Http\Controllers\CouponController;
 
 // Public routes for authentication
 Route::post('register', [AuthController::class, 'register']);
@@ -17,16 +15,17 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Products
     Route::resource('products', ProductController::class);
-    
+
     // Orders
-    Route::resource('orders', OrderController::class);
-    
+    Route::get('/orders', [OrderController::class, 'index']);  // Get all orders for the logged-in user
+    Route::post('/orders', [OrderController::class, 'store']); // Create a new order
+    Route::get('/orders/{id}', [OrderController::class, 'show']); // Get details of a specific order
+
     // Blogs
     Route::resource('blogs', BlogController::class);
-    
+
     // Hero Section
     Route::resource('hero-sections', HeroSectionController::class);
-    
-    // Coupons
-    Route::resource('coupons', CouponController::class);
+
+
 });

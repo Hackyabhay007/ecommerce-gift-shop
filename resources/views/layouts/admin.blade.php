@@ -20,6 +20,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.products.index') }}">Manage Products</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.coupons.index') }}">Manage Coupons</a>
+                    </li>
                 </ul>
             </div>
         </div>
