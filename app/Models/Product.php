@@ -19,9 +19,10 @@ class Product extends Model
         'size',
         'weight',
         'description',
-        'images',
+        'images'
     ];
 
+    // Convert categories and images to array automatically
     protected $casts = [
         'categories' => 'array',
         'images' => 'array',
