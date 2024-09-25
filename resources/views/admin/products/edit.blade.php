@@ -7,104 +7,97 @@
         @csrf
         @method('PUT')
 
+        <!-- Product Name -->
         <div class="form-group">
             <label for="name">Product Name</label>
             <input type="text" name="name" class="form-control" value="{{ $product->name }}" required>
         </div>
 
-        <div class="form-group">
-            <label for="sku">SKU</label>
-            <input type="text" name="sku" class="form-control" value="{{ $product->sku }}" required>
-        </div>
-
+        <!-- Price -->
         <div class="form-group">
             <label for="price">Price</label>
             <input type="number" name="price" class="form-control" step="0.01" value="{{ $product->price }}" required>
         </div>
 
+        <!-- Stock Quantity -->
         <div class="form-group">
             <label for="stock_quantity">Stock Quantity</label>
             <input type="number" name="stock_quantity" class="form-control" value="{{ $product->stock_quantity }}" required>
         </div>
 
+        <!-- Description -->
         <div class="form-group">
             <label for="description">Description</label>
             <textarea name="description" class="form-control" rows="4" required>{{ $product->description }}</textarea>
         </div>
 
+        <!-- Categories -->
         <div class="form-group">
-            <label for="categories">Categories</label>
+            <label>Categories</label>
             @foreach($categories as $category)
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category }}" id="category{{ $loop->index }}"
-                        {{ in_array($category, $product->categories ?? []) ? 'checked' : '' }}>
-                    <label class="form-check-label" for="category{{ $loop->index }}">
-                        {{ $category }}
+                    <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category->id }}" id="category{{ $category->id }}"
+                        {{ in_array($category->id, $product->categories) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="category{{ $category->id }}">
+                        {{ $category->name }}
                     </label>
                 </div>
             @endforeach
         </div>
 
+        <!-- Size -->
         <div class="form-group">
             <label for="size">Size</label>
             <input type="text" name="size" class="form-control" value="{{ $product->size }}">
         </div>
 
+        <!-- Weight -->
         <div class="form-group">
             <label for="weight">Weight</label>
             <input type="number" name="weight" class="form-control" step="0.01" value="{{ $product->weight }}">
         </div>
 
+        <!-- Image Uploads -->
         <div class="form-group">
-            <label for="images">Select Images</label>
-            <button type="button" id="select-images-btn" class="btn btn-primary">Select Images</button>
-            <div id="selected-images">
-                @foreach($product->images as $image)
-                    <img src="{{ asset('storage/' . $image) }}" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;">
-                @endforeach
+            <label for="images">Product Images</label>
+
+            <div id="image-preview" class="mb-3">
+                <h5>Current Images</h5>
+                <div class="row">
+                    @foreach($product->images as $image)
+                        <div class="col-md-3">
+                            <img src="{{ asset('storage/' . $image) }}" alt="Product Image" style="width: 100px; height: auto;">
+                        </div>
+                    @endforeach
+                </div>
             </div>
-            <input type="file" name="images[]" id="images" class="form-control-file" multiple>
-            <small class="form-text text-muted">You can select multiple images (up to 5).</small>
+
+            <div class="form-group">
+                <label for="images">Upload New Images</label>
+                <div>
+                    <input type="file" name="images[]" class="form-control-file" required>
+                    <small class="form-text text-muted">Image 1 (Mandatory)</small>
+                </div>
+                <div>
+                    <input type="file" name="images[]" class="form-control-file" required>
+                    <small class="form-text text-muted">Image 2 (Mandatory)</small>
+                </div>
+                <div>
+                    <input type="file" name="images[]" class="form-control-file" required>
+                    <small class="form-text text-muted">Image 3 (Mandatory)</small>
+                </div>
+                <div>
+                    <input type="file" name="images[]" class="form-control-file">
+                    <small class="form-text text-muted">Image 4 (Optional)</small>
+                </div>
+                <div>
+                    <input type="file" name="images[]" class="form-control-file">
+                    <small class="form-text text-muted">Image 5 (Optional)</small>
+                </div>
+            </div>
+
         </div>
 
         <button type="submit" class="btn btn-success">Update Product</button>
     </form>
 @endsection
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const selectImagesBtn = document.getElementById('select-images-btn');
-        const selectedImagesContainer = document.getElementById('selected-images');
-        const maxImages = 5;
-        let selectedImages = @json($product->images);
-
-        // Event listener for the "Select Images" button
-        selectImagesBtn.addEventListener('click', function() {
-            fetch('{{ route('admin.products.images') }}')
-                .then(response => response.json())
-                .then(images => {
-                    let popupHtml = `<div class="image-popup" style="position:fixed; top:50px; left:50%; transform:translateX(-50%); background:white; padding:20px; z-index:1000; width:400px; height:300px; overflow:auto;">`;
-                    images.forEach(image => {
-                        popupHtml += `
-                            <div>
-                                <input type="checkbox" class="image-checkbox" value="${image}" 
-                                       ${selectedImages.includes(image) ? 'checked' : ''}>
-                                <img src="{{ asset('storage/${image}') }}" alt="${image}" style="width: 100px; height: auto;">
-                            </div>`;
-                    });
-                    popupHtml += `<button id="save-images-btn" class="btn btn-primary mt-3">Save Selection</button></div>`;
-                    document.body.insertAdjacentHTML('beforeend', popupHtml);
-
-                    // Handle saving the selected images
-                    document.getElementById('save-images-btn').addEventListener('click', function() {
-                        const checkboxes = document.querySelectorAll('.image-checkbox:checked');
-                        selectedImages = Array.from(checkboxes).map(cb => cb.value);
-                        selectedImagesContainer.innerHTML = selectedImages.map(image => `<img src="{{ asset('storage/${image}') }}" style="width: 100px; height: auto; margin-right: 10px;">`).join('');
-                        document.querySelector('.image-popup').remove();
-                    });
-                });
-        });
-    });
-</script>
-@endpush
