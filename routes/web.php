@@ -5,6 +5,10 @@ use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\AdminHeroSectionController;
 use App\Http\Controllers\Admin\AdminCategoryController;
+use App\Http\Controllers\Admin\AdminBlogController;
+use App\Http\Controllers\CKEditorController;
+ 
+
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
@@ -33,6 +37,9 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/products/images', [ProductController::class, 'getUploadedImages'])->name('admin.products.images');
     Route::post('/products/upload', [ProductController::class, 'uploadImage'])->name('admin.products.upload');
     
+
+    
+
     // Hero Section routes
     Route::get('/hero-sections', [AdminHeroSectionController::class, 'index'])->name('admin.hero-sections.index');
     Route::get('/hero-sections/create', [AdminHeroSectionController::class, 'create'])->name('admin.hero-sections.create');
@@ -40,7 +47,8 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::get('/hero-sections/{heroSection}/edit', [AdminHeroSectionController::class, 'edit'])->name('admin.hero-sections.edit');
     Route::put('/hero-sections/{heroSection}', [AdminHeroSectionController::class, 'update'])->name('admin.hero-sections.update');
     Route::delete('/hero-sections/{heroSection}', [AdminHeroSectionController::class, 'destroy'])->name('admin.hero-sections.destroy');
-     // Coupon routes
+   
+    // Coupon routes
      Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
      Route::get('/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
      Route::post('/coupons', [CouponController::class, 'store'])->name('admin.coupons.store');
@@ -56,5 +64,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
         Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
         Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
 
+
+        // Blog list page
+        Route::get('/blogs', [AdminBlogController::class, 'index'])->name('admin.blogs.index');
+        Route::get('/blogs/create', [AdminBlogController::class, 'create'])->name('admin.blogs.create');
+        Route::post('/blogs', [AdminBlogController::class, 'store'])->name('admin.blogs.store');
+        Route::get('/blogs/{blog}/edit', [AdminBlogController::class, 'edit'])->name('admin.blogs.edit');
+        Route::put('/blogs/{blog}', [AdminBlogController::class, 'update'])->name('admin.blogs.update');
+        Route::delete('/blogs/{blog}', [AdminBlogController::class, 'destroy'])->name('admin.blogs.destroy');
+    
 });
 

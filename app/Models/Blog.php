@@ -9,9 +9,9 @@ class Blog extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'title',
-        'content',
-        'author',
-    ];
+    protected $fillable = ['title', 'content', 'category_id', 'author', 'image'];
+
+    public function category() {
+        return $this->belongsTo(Category::class);
+    }
 }

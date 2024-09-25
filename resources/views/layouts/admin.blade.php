@@ -31,6 +31,10 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('admin.categories.index') }}">Manage Categories</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('admin.blogs.index') }}">Manage Blogs</a>
+                    </li>
+                    
                 </ul>
             </div>
         </div>
