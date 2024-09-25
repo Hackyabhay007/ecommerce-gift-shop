@@ -26,8 +26,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('orders', [OrderController::class, 'store']); // Create an order
     Route::get('orders/{id}', [OrderController::class, 'show']); // Show a specific order
     // Blogs
-    Route::resource('blogs', BlogController::class);
+  // Get blogs with custom URL pattern (pagination)
+Route::get('/blog/blogs-{start}-{end}', [BlogController::class, 'index']);
 
+// Get a single blog by ID
+Route::get('/blog/{blog}', [BlogController::class, 'show']);
     // Hero Section
     Route::resource('hero-sections', HeroSectionController::class);
 
