@@ -10,8 +10,15 @@ class HeroSection extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'subtitle',
-        'image_url',
+        'heading',
+        'subheading',
+        'button_text',
+        'button_link',
+        'image',
+        'bg_color',
+    ];
+
+    protected $casts = [
+        'bg_color' => 'string',
     ];
 }

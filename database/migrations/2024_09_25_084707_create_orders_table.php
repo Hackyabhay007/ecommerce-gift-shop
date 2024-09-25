@@ -4,33 +4,37 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateOrdersTable extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('product_id');
+            $table->string('order_id')->unique();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->constrained()->onDelete('cascade');
             $table->string('email');
-            $table->text('address');
+            $table->string('address');
             $table->string('state');
             $table->string('city');
             $table->string('pincode');
             $table->string('country');
             $table->string('phone_number');
             $table->decimal('price', 10, 2);
-            $table->string('order_id')->unique(); // 10-digit alphanumeric
-            $table->enum('payment_type', ['cod', 'online']);
-            $table->string('coupon_used')->nullable(); // Nullable for no coupon
+            $table->string('payment_type');
+            $table->string('coupon_used')->nullable();
             $table->timestamps();
-
-            // Foreign key constraint
-            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down()
     {
         Schema::dropIfExists('orders');
     }
-};
+}

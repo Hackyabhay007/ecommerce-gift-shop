@@ -32,25 +32,61 @@
         </div>
 
         <div class="form-group">
-            <label for="categories">Categories (as JSON array)</label>
-            <input type="text" name="categories" class="form-control" placeholder='["category1", "category2"]' required>
+            <label for="categories">Categories</label>
+            @foreach($categories as $category)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category }}" id="category{{ $loop->index }}">
+                    <label class="form-check-label" for="category{{ $loop->index }}">
+                        {{ $category }}
+                    </label>
+                </div>
+            @endforeach
         </div>
 
         <div class="form-group">
-            <label for="size">Size</label>
-            <input type="text" name="size" class="form-control" placeholder="Enter size (optional)">
-        </div>
-
-        <div class="form-group">
-            <label for="weight">Weight</label>
-            <input type="number" name="weight" class="form-control" step="0.01" placeholder="Enter weight (optional)">
-        </div>
-
-        <div class="form-group">
-            <label for="images">Images (as JSON array)</label>
-            <input type="text" name="images" class="form-control" placeholder='["image1.png", "image2.png"]'>
+            <label for="images">Select Images</label>
+            <button type="button" id="select-images-btn" class="btn btn-primary">Select Images</button>
+            <div id="selected-images"></div>
+            <input type="file" name="images[]" id="images" class="form-control-file" multiple>
+            <small class="form-text text-muted">You can select up to 5 images.</small>
         </div>
 
         <button type="submit" class="btn btn-success">Create Product</button>
     </form>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const maxImages = 5;
+        const selectImagesBtn = document.getElementById('select-images-btn');
+        const selectedImagesContainer = document.getElementById('selected-images');
+        let selectedImages = [];
+
+        selectImagesBtn.addEventListener('click', function() {
+            fetch('{{ route('admin.products.images') }}')
+                .then(response => response.json())
+                .then(images => {
+                    let popupHtml = `<div class="image-popup">`;
+                    images.forEach(image => {
+                        popupHtml += `
+                            <div>
+                                <input type="checkbox" class="image-checkbox" value="${image}" 
+                                       ${selectedImages.includes(image) ? 'checked' : ''}>
+                                <img src="{{ asset('storage/${image}') }}" alt="${image}" style="width: 100px; height: auto;">
+                            </div>`;
+                    });
+                    popupHtml += `<button id="save-images-btn">Save Selection</button></div>`;
+                    document.body.insertAdjacentHTML('beforeend', popupHtml);
+
+                    document.getElementById('save-images-btn').addEventListener('click', function() {
+                        const checkboxes = document.querySelectorAll('.image-checkbox:checked');
+                        selectedImages = Array.from(checkboxes).map(cb => cb.value);
+                        selectedImagesContainer.innerHTML = selectedImages.map(image => `<img src="{{ asset('storage/${image}') }}" style="width: 100px; height: auto;">`).join('');
+                        document.querySelector('.image-popup').remove();
+                    });
+                });
+        });
+    });
+</script>
+@endpush

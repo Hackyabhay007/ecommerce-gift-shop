@@ -8,19 +8,21 @@ use App\Http\Controllers\HeroSectionController;
 // Public routes for authentication
 Route::post('register', [AuthController::class, 'register']);
 Route::post('login', [AuthController::class, 'login']);
+Route::get('hero-sections', [HeroSectionController::class, 'index']);
+Route::get('hero-sections/{id}', [HeroSectionController::class, 'show']);
+Route::resource('products', ProductController::class);
+  
 
 // Protected routes (requires token)
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
-    // Products
-    Route::resource('products', ProductController::class);
 
     // Orders
-    Route::get('/orders', [OrderController::class, 'index']);  // Get all orders for the logged-in user
-    Route::post('/orders', [OrderController::class, 'store']); // Create a new order
-    Route::get('/orders/{id}', [OrderController::class, 'show']); // Get details of a specific order
-
+   // Get all orders
+   Route::get('orders', [OrderController::class, 'index']); 
+    Route::post('orders', [OrderController::class, 'store']); // Create an order
+    Route::get('orders/{id}', [OrderController::class, 'show']); // Show a specific order
     // Blogs
     Route::resource('blogs', BlogController::class);
 

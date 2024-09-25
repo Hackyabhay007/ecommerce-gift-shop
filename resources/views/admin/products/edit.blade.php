@@ -33,8 +33,16 @@
         </div>
 
         <div class="form-group">
-            <label for="categories">Categories (as JSON array)</label>
-            <input type="text" name="categories" class="form-control" value="{{ json_encode($product->categories) }}" required>
+            <label for="categories">Categories</label>
+            @foreach($categories as $category)
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="categories[]" value="{{ $category }}" id="category{{ $loop->index }}"
+                        {{ in_array($category, $product->categories ?? []) ? 'checked' : '' }}>
+                    <label class="form-check-label" for="category{{ $loop->index }}">
+                        {{ $category }}
+                    </label>
+                </div>
+            @endforeach
         </div>
 
         <div class="form-group">
@@ -48,10 +56,55 @@
         </div>
 
         <div class="form-group">
-            <label for="images">Images (as JSON array)</label>
-            <input type="text" name="images" class="form-control" value="{{ json_encode($product->images) }}">
+            <label for="images">Select Images</label>
+            <button type="button" id="select-images-btn" class="btn btn-primary">Select Images</button>
+            <div id="selected-images">
+                @foreach($product->images as $image)
+                    <img src="{{ asset('storage/' . $image) }}" alt="Product Image" style="width: 100px; height: auto; margin-right: 10px;">
+                @endforeach
+            </div>
+            <input type="file" name="images[]" id="images" class="form-control-file" multiple>
+            <small class="form-text text-muted">You can select multiple images (up to 5).</small>
         </div>
 
         <button type="submit" class="btn btn-success">Update Product</button>
     </form>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectImagesBtn = document.getElementById('select-images-btn');
+        const selectedImagesContainer = document.getElementById('selected-images');
+        const maxImages = 5;
+        let selectedImages = @json($product->images);
+
+        // Event listener for the "Select Images" button
+        selectImagesBtn.addEventListener('click', function() {
+            fetch('{{ route('admin.products.images') }}')
+                .then(response => response.json())
+                .then(images => {
+                    let popupHtml = `<div class="image-popup" style="position:fixed; top:50px; left:50%; transform:translateX(-50%); background:white; padding:20px; z-index:1000; width:400px; height:300px; overflow:auto;">`;
+                    images.forEach(image => {
+                        popupHtml += `
+                            <div>
+                                <input type="checkbox" class="image-checkbox" value="${image}" 
+                                       ${selectedImages.includes(image) ? 'checked' : ''}>
+                                <img src="{{ asset('storage/${image}') }}" alt="${image}" style="width: 100px; height: auto;">
+                            </div>`;
+                    });
+                    popupHtml += `<button id="save-images-btn" class="btn btn-primary mt-3">Save Selection</button></div>`;
+                    document.body.insertAdjacentHTML('beforeend', popupHtml);
+
+                    // Handle saving the selected images
+                    document.getElementById('save-images-btn').addEventListener('click', function() {
+                        const checkboxes = document.querySelectorAll('.image-checkbox:checked');
+                        selectedImages = Array.from(checkboxes).map(cb => cb.value);
+                        selectedImagesContainer.innerHTML = selectedImages.map(image => `<img src="{{ asset('storage/${image}') }}" style="width: 100px; height: auto; margin-right: 10px;">`).join('');
+                        document.querySelector('.image-popup').remove();
+                    });
+                });
+        });
+    });
+</script>
+@endpush

@@ -3,6 +3,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\AdminProductController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\AdminHeroSectionController;
+use App\Http\Controllers\Admin\AdminCategoryController;
 Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
@@ -27,7 +29,15 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
     Route::put('products/{product}', [AdminProductController::class, 'update'])->name('admin.products.update'); // Update a product
     Route::delete('products/{product}', [AdminProductController::class, 'destroy'])->name('admin.products.destroy'); // Delete a product
     Route::resource('coupons', CouponController::class); // Add this line for coupons
-
+    Route::get('/admin/products/images', [AdminProductController::class, 'getUploadedImages'])->name('admin.products.images');
+    
+    // Hero Section routes
+    Route::get('/hero-sections', [AdminHeroSectionController::class, 'index'])->name('admin.hero-sections.index');
+    Route::get('/hero-sections/create', [AdminHeroSectionController::class, 'create'])->name('admin.hero-sections.create');
+    Route::post('/hero-sections', [AdminHeroSectionController::class, 'store'])->name('admin.hero-sections.store');
+    Route::get('/hero-sections/{heroSection}/edit', [AdminHeroSectionController::class, 'edit'])->name('admin.hero-sections.edit');
+    Route::put('/hero-sections/{heroSection}', [AdminHeroSectionController::class, 'update'])->name('admin.hero-sections.update');
+    Route::delete('/hero-sections/{heroSection}', [AdminHeroSectionController::class, 'destroy'])->name('admin.hero-sections.destroy');
      // Coupon routes
      Route::get('/coupons', [CouponController::class, 'index'])->name('admin.coupons.index');
      Route::get('/coupons/create', [CouponController::class, 'create'])->name('admin.coupons.create');
@@ -35,6 +45,14 @@ Route::middleware(['auth'])->prefix('admin')->group(function () {
      Route::get('/coupons/{coupon}/edit', [CouponController::class, 'edit'])->name('admin.coupons.edit');
      Route::put('/coupons/{coupon}', [CouponController::class, 'update'])->name('admin.coupons.update');
      Route::delete('/coupons/{coupon}', [CouponController::class, 'destroy'])->name('admin.coupons.destroy');
- 
+Route::get('/admin/products/images', [AdminProductController::class, 'getUploadedImages'])->name('admin.products.images');
+        // Category routes
+        Route::get('/categories', [AdminCategoryController::class, 'index'])->name('admin.categories.index');
+        Route::get('/categories/create', [AdminCategoryController::class, 'create'])->name('admin.categories.create');
+        Route::post('/categories', [AdminCategoryController::class, 'store'])->name('admin.categories.store');
+        Route::get('/categories/{category}/edit', [AdminCategoryController::class, 'edit'])->name('admin.categories.edit');
+        Route::put('/categories/{category}', [AdminCategoryController::class, 'update'])->name('admin.categories.update');
+        Route::delete('/categories/{category}', [AdminCategoryController::class, 'destroy'])->name('admin.categories.destroy');
+
 });
 
