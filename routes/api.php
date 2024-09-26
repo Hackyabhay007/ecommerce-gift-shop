@@ -31,9 +31,17 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [AuthController::class, 'logout']);
 
     // Orders (only for authenticated users)
-    Route::get('orders', [OrderController::class, 'index']);  // Get all orders
-    Route::post('orders', [OrderController::class, 'store']); // Create an order
-    Route::get('orders/{id}', [OrderController::class, 'show']); // Show a specific order
+    // Create a new order
+Route::post('/orders', [OrderController::class, 'store'])->middleware('auth:sanctum');
+
+// Get paginated list of all orders (Admin use or general use)
+Route::get('/orders', [OrderController::class, 'index'])->middleware('auth:sanctum');
+
+// Get a specific order by order ID
+Route::get('/orders/{order_id}', [OrderController::class, 'show'])->middleware('auth:sanctum');
+
+// Get all orders of the authenticated user
+Route::get('/user/orders', [OrderController::class, 'userOrders'])->middleware('auth:sanctum');
 
     // Protected hero section routes
     Route::resource('hero-sections', HeroSectionController::class)->except(['index', 'show']);
