@@ -12,6 +12,15 @@ class ProductController extends Controller
     {
         $perPage = $request->query('per_page', 10); // Default to 10 products per page
         $products = Product::paginate($perPage);
+
+        // Modify the images to return full URLs
+        $products->getCollection()->transform(function ($product) {
+            $product->images = array_map(function ($image) {
+                return asset('storage/' . $image); // Generate full URL for each image
+            }, $product->images);
+            return $product;
+        });
+
         return response()->json($products);
     }
 
@@ -67,6 +76,11 @@ class ProductController extends Controller
             return response()->json(['message' => 'Product not found'], 404);
         }
 
+        // Modify the images to return full URLs
+        $product->images = array_map(function ($image) {
+            return asset('storage/' . $image); // Generate full URL for each image
+        }, $product->images);
+
         return response()->json($product);
     }
 
@@ -107,6 +121,14 @@ class ProductController extends Controller
             return response()->json(['message' => 'No products found for this category'], 404);
         }
 
+        // Modify the images to return full URLs
+        $products->transform(function ($product) {
+            $product->images = array_map(function ($image) {
+                return asset('storage/' . $image); // Generate full URL for each image
+            }, $product->images);
+            return $product;
+        });
+
         return response()->json($products);
     }
 
@@ -118,6 +140,11 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json(['message' => 'Product not found'], 404);
         }
+
+        // Modify the images to return full URLs
+        $product->images = array_map(function ($image) {
+            return asset('storage/' . $image); // Generate full URL for each image
+        }, $product->images);
 
         return response()->json($product);
     }
